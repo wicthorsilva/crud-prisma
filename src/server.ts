@@ -23,6 +23,19 @@ interface UserAttrs {
     password: string,
 }
 
+server.post<{Body: UserAttrs }>('/user', async (request, reply) => {
+    const {email, password} = request.body;
+
+    const newUser = await prisma.user.create({
+        data:{
+            email,
+            password,
+        }
+    });
+
+    return reply.status(201).send(newUser);
+});
+
 server.listen ({port: 3000}, (error, address) => {
     if (error) {
         console.error(error);
