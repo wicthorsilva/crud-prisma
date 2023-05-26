@@ -63,6 +63,18 @@ server.post('/lobos', async (request, reply) => {
   });
 
 
+
+  server.delete('/posts/:id', async (request, reply) => {
+    const { id } = request.params;
+  
+    await prisma.lobo.delete({
+         where: { id },
+ });
+    return reply.status(204).send();
+  });
+  
+
+
 server.listen ({port: 3000}, (error, address) => {
     if (error) {
         console.error(error);
