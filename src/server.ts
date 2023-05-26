@@ -43,14 +43,14 @@ server.post('/lobos', async (request, reply) => {
   });
 
 
-  server.put('/posts/:id', async (request, reply) => {
-    const  {id}  = request.params;
+  server.put('/post/:postId', async (request, reply) => {
+    const  {postId}  = request.params;
     const {
         familia, caracteristicas, pesoMedio, carnivoro
      } = request.body as interfaceLobos;
   
-    const updatedPost = await prisma.lobo.update({
-      where: { id },
+    const updatePost = await prisma.lobo.updateMany({
+      where: { id: postId },
       data: {
         familia,
           caracteristicas,
@@ -59,7 +59,7 @@ server.post('/lobos', async (request, reply) => {
       },
     });
   
-    return reply.status(200).send(updatedPost);
+    return reply.status(200).send(updatePost);
   });
 
 
