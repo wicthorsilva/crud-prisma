@@ -20,6 +20,10 @@ interface InterfaceLobos {
     carnivoro: boolean;
 }
 
+server.get('/', (_request, reply) => {
+    return "Servidor on-line...";
+  });
+
 server.get('/lobos', async (request, reply) => {
   const lobos = await prisma.lobo.findMany();
   return reply.status(201).send(lobos);
