@@ -2,7 +2,7 @@ import fastify from 'fastify';
 //import fastifyCors from 'fastify-cors';
 import * as dotenv from 'dotenv';
 import {PrismaClient} from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+
 
 dotenv.config();
 const port: any = process.env.PORT;
@@ -13,7 +13,7 @@ const server = fastify();
 
 // server.register(fastifyCors);
 
-interface interfaceLobos {
+interface InterfaceLobos {
     familia: string;
     caracteristicas: string;
     pesoMedio: number;
@@ -28,7 +28,7 @@ server.get('/lobos', async (request, reply) => {
 server.post('/lobos', async (request, reply) => {
     const {
         familia, caracteristicas, pesoMedio, carnivoro
-    } = request.body as interfaceLobos;
+    } = request.body as InterfaceLobos;
 
     const newLobo = await prisma.lobo.create({
         data: {
@@ -43,11 +43,11 @@ server.post('/lobos', async (request, reply) => {
   });
 
 
-  server.put('/post/:postId', async (request, reply) => {
+  server.put<{Params: {postId: string}}>('/post/:postId', async (request, reply) => {
     const  {postId}  = request.params;
     const {
         familia, caracteristicas, pesoMedio, carnivoro
-     } = request.body as interfaceLobos;
+     } = request.body as InterfaceLobos;
   
     const updatePost = await prisma.lobo.updateMany({
       where: { id: postId },
@@ -64,7 +64,7 @@ server.post('/lobos', async (request, reply) => {
 
 
 
-  server.delete('/posts/:id', async (request, reply) => {
+  server.delete<{Params: {id: string}}>('/posts/:id', async (request, reply) => {
     const { id } = request.params;
   
     await prisma.lobo.delete({
