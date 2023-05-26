@@ -1,7 +1,8 @@
-import fastify from "fastify";
-// import cors from "@fastify/cors";
-import dotenv from "dotenv";
-import {PrismaClient} from "@prisma/client"
+import fastify from 'fastify';
+//import fastifyCors from 'fastify-cors';
+import * as dotenv from 'dotenv';
+import {PrismaClient} from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime';
 
 dotenv.config();
 const port: any = process.env.PORT;
@@ -10,31 +11,57 @@ const prisma = new PrismaClient();
 
 const server = fastify();
 
-// server.register(cors, {
-//     //Opções
-// })
+// server.register(fastifyCors);
 
-server.get('/', (request, reply) => {
-    return "Servidor on-line...";
-});
-
-interface UserAttrs {
-    email: string,
-    password: string,
+interface interfaceLobos {
+    familia: string;
+    caracteristicas: string;
+    pesoMedio: number;
+    carnivoro: boolean;
 }
 
-server.post<{Body: UserAttrs }>('/user', async (request, reply) => {
-    const {email, password} = request.body;
-
-    const newUser = await prisma.user.create({
-        data:{
-            email,
-            password,
-        }
-    });
-
-    return reply.status(201).send(newUser);
+server.get('/lobos', async (request, reply) => {
+  const lobos = await prisma.lobo.findMany();
+  return reply.status(201).send(lobos);
 });
+
+server.post('/lobos', async (request, reply) => {
+    const {
+        familia, caracteristicas, pesoMedio, carnivoro
+    } = request.body as interfaceLobos;
+
+    const newLobo = await prisma.lobo.create({
+        data: {
+          familia,
+          caracteristicas,
+          pesoMedio,
+          carnivoro,
+        },
+      });
+
+    return reply.status(201).send(newLobo);
+  });
+
+
+  server.put('/posts/:id', async (request, reply) => {
+    const  {id}  = request.params;
+    const {
+        familia, caracteristicas, pesoMedio, carnivoro
+     } = request.body as interfaceLobos;
+  
+    const updatedPost = await prisma.lobo.update({
+      where: { id },
+      data: {
+        familia,
+          caracteristicas,
+          pesoMedio,
+          carnivoro,
+      },
+    });
+  
+    return reply.status(200).send(updatedPost);
+  });
+
 
 server.listen ({port: 3000}, (error, address) => {
     if (error) {
@@ -44,3 +71,5 @@ server.listen ({port: 3000}, (error, address) => {
         console.log(`Servidor rodando em ${address}`);
     }
 });
+
+
